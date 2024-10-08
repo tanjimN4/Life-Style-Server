@@ -8,7 +8,10 @@ const cors = require('cors')
 const stripe = require("stripe")(process.env.sk);
 
 //middleware
-app.use(cors())
+app.use(cors({
+  origin: ["https://user-email-password-auth-13c4c.web.app"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 app.use(express.json())
 
 
@@ -75,6 +78,26 @@ async function run() {
       res.send(products)
 
     })
+    //product delete
+     app.delete('/product/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const  result = await productCollection.deleteOne(query)
+      res.send(result)
+     })
+
+    //add product
+    app.post('/addProduct', async (req, res) => {
+      const product = req.body
+      const result = await productCollection.insertOne(product)
+      res.send(result)
+    })
+    app.delete('/deleteProduct/:id', async (req, res) => {
+      const id = req.params.id
+      const result = await AdminCheckCollection.deleteOne({ _id: new ObjectId(id) })
+      res.send(result)
+    })
+
     app.post('/users', async (req, res) => {
       const user = req.body
       const query = { email: user.email }
@@ -160,17 +183,17 @@ async function run() {
     //update status
     app.put('/orders/:id', async (req, res) => {
       const id = req.params.id;
-      const {order_status}=req.body
-      const filter = { _id: new ObjectId(id)};
+      const { order_status } = req.body
+      const filter = { _id: new ObjectId(id) };
       const updateDoc = {
-          $set: {
-            order_status: order_status,
-          },
+        $set: {
+          order_status: order_status,
+        },
       };
       const result = await PaymentSuccessCollection.updateOne(filter, updateDoc);
       res.send(result);
-  });
-  
+    });
+
 
     //product data save after payment success
     app.post('/add/chart/payment', async (req, res) => {
@@ -217,7 +240,7 @@ async function run() {
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
