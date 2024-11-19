@@ -9,7 +9,7 @@ const stripe = require("stripe")(process.env.sk);
 
 //middleware
 app.use(cors({
-  origin: ["https://user-email-password-auth-13c4c.web.app","http://localhost:5173","https://user-email-password-auth-13c4c.firebaseapp.com/"],
+  origin: ["https://user-email-password-auth-13c4c.web.app","http://localhost:5173","https://user-email-password-auth-13c4c.firebaseapp.com"],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
